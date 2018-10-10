@@ -74,6 +74,10 @@ public class Steps implements Parcelable {
         return thumbnailURL;
     }
 
+    public String getStepInfo(){
+        return getId() + ". " + getShortDescription() + "\n";
+    }
+
     public Steps(Parcel in){
         this.id = in.readInt();
         this.shortDescription = in.readString();

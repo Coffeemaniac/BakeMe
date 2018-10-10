@@ -81,6 +81,14 @@ public class Recipe implements Parcelable {
         return  IngredientList;
     }
 
+    public String getAllSteps(){
+        String allSteps = "";
+        for(Steps s: this.steps){
+            allSteps = allSteps + s.getStepInfo();
+        }
+        return allSteps;
+    }
+
     public Recipe(Parcel in){
         this.id = in.readInt();
         this.name = in.readString();

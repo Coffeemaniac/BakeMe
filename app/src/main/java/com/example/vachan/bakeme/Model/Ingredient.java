@@ -59,6 +59,7 @@ public class Ingredient implements Parcelable {
         return "\u2022" + " " + getIngredient() + " " + "(" + getQuantity() + " " + getMeasure() + ")";
     }
 
+
     public Ingredient(Parcel in){
         this.quantity = in.readDouble();
         this.measure = in.readString();
