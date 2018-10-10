@@ -1,11 +1,14 @@
 package com.example.vachan.bakeme.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class Recipe {
+public class Recipe implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -25,6 +28,17 @@ public class Recipe {
     @SerializedName("image")
     @Expose
     private String image;
+
+    public static final Parcelable.Creator CREATOR = new
+            Parcelable.Creator(){
+                public Recipe createFromParcel(Parcel in){
+                    return new Recipe(in);
+                }
+
+                public Recipe[] newArray(int size){
+                    return new Recipe[size];
+                }
+            };
 
     public Recipe(int id, String name, ArrayList<Ingredient> ingredients, ArrayList<Steps> steps, int servings, String image) {
         this.id = id;
@@ -57,5 +71,37 @@ public class Recipe {
 
     public String getImage() {
         return image;
+    }
+
+    public String getAllIngredients(){
+        String IngredientList = "";
+        for(Ingredient i: this.ingredients){
+            IngredientList = IngredientList + i.getIngredientInfo() + "\n";
+        }
+        return  IngredientList;
+    }
+
+    public Recipe(Parcel in){
+        this.id = in.readInt();
+        this.name = in.readString();
+        this.ingredients = in.readArrayList(Ingredient.class.getClassLoader());
+        this.steps = in.readArrayList(Steps.class.getClassLoader());
+        this.servings = in.readInt();
+        this.image = in.readString();
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeInt(this.id);
+        dest.writeString(this.name);
+        dest.writeList(this.ingredients);
+        dest.writeList(this.steps);
+        dest.writeInt(this.servings);
+        dest.writeString(this.image);
     }
 }

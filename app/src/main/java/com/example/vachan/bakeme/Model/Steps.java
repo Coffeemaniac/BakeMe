@@ -11,10 +11,13 @@ package com.example.vachan.bakeme.Model;
 
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Steps {
+public class Steps implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -31,6 +34,17 @@ public class Steps {
     @SerializedName("thumbnailURL")
     @Expose
     private String thumbnailURL;
+
+    public static final Parcelable.Creator CREATOR = new
+            Parcelable.Creator(){
+                public Steps createFromParcel(Parcel in){
+                    return new Steps(in);
+                }
+
+                public Steps[] newArray(int size){
+                    return new Steps[size];
+                }
+            };
 
     public Steps(int id, String shortDescription, String description, String videoURL, String thumbnailURL) {
         this.id = id;
@@ -58,5 +72,27 @@ public class Steps {
 
     public String getThumbnailURL() {
         return thumbnailURL;
+    }
+
+    public Steps(Parcel in){
+        this.id = in.readInt();
+        this.shortDescription = in.readString();
+        this.description = in.readString();
+        this.videoURL = in.readString();
+        this.thumbnailURL = in.readString();
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+       dest.writeInt(this.id);
+       dest.writeString(this.shortDescription);
+       dest.writeString(this.description);
+       dest.writeString(this.videoURL);
+       dest.writeString(this.thumbnailURL);
     }
 }

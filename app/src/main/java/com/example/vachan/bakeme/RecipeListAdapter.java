@@ -1,7 +1,9 @@
 package com.example.vachan.bakeme;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,8 +35,18 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.My
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final RecipeListAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecipeListAdapter.MyViewHolder holder, final int position) {
+
         holder.nameView.setText(mData.get(position).getName());
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, RecipeDetailsActivity.class);
+                intent.putExtra("Recipe", mData.get(position));
+                mContext.startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -45,10 +57,12 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.My
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
          TextView nameView;
+         CardView cardView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             nameView = (TextView) itemView.findViewById(R.id.name);
+            cardView = (CardView) itemView.findViewById(R.id.cardView);
         }
     }
 

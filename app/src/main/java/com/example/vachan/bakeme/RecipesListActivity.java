@@ -1,6 +1,5 @@
 package com.example.vachan.bakeme;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,7 +8,6 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.example.vachan.bakeme.Model.Recipe;
-import com.example.vachan.bakeme.Model.Results;
 
 import java.util.ArrayList;
 
@@ -42,9 +40,6 @@ public class RecipesListActivity extends AppCompatActivity {
         myAdapter = new RecipeListAdapter(this, recipesList);
         recipesRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recipesRecyclerView.setAdapter(myAdapter);
-
-
-
 
 
         Retrofit retrofit = new Retrofit.Builder()
