@@ -21,14 +21,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RecipesListActivity extends AppCompatActivity {
 
-    private TextView outputView;
     private NetworkAPIClient client;
     private ArrayList<Recipe> recipesList;
     private RecyclerView recipesRecyclerView;
     private RecipeListAdapter myAdapter;
-
-
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

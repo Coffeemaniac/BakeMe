@@ -3,6 +3,7 @@ package com.example.vachan.bakeme;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -26,6 +27,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
 
+
         textView = findViewById(R.id.textView);
 
         Intent intent = getIntent();
@@ -33,11 +35,14 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         final Recipe recipe = bd.getParcelable("Recipe");
         textView.setText(recipe.getAllIngredients());
 
+        getSupportActionBar().setTitle(recipe.getName());
+
         stepsList = new ArrayList<>();
         stepsList.addAll(recipe.getSteps());
 
         stepsRecyclerView = findViewById(R.id.stepsRecyclerView);
         mStepsAdapter = new StepsAdapter(this, stepsList);
+
         stepsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         stepsRecyclerView.setAdapter(mStepsAdapter);
 

@@ -43,6 +43,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.MyViewHolder
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, StepsDetailsActivity.class);
                 intent.putExtra("Step", mData.get(position));
+                intent.putExtra("total_steps", mData.size());
                 mContext.startActivity(intent);
             }
         });

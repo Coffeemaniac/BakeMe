@@ -28,6 +28,9 @@ public class StepsDetailsActivity extends AppCompatActivity {
     private int currentWindow;
     private boolean playWhenReady;
     private Steps step;
+    private String title;
+    private int total_steps;
+    private String titleText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,14 @@ public class StepsDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final Bundle bd = intent.getExtras();
         step = bd.getParcelable("Step");
+        total_steps = bd.getInt("total_steps") - 1;
         descriptionTv.setText(step.getDescription());
+
+        titleText = "Step " + step.getId() + " of the " + total_steps + " steps";
+        getSupportActionBar().setTitle(titleText);
+
+
+
 
         Log.v("URL", "The video URL is" + step.getVideoURL());
 
