@@ -1,4 +1,4 @@
-package com.example.vachan.bakeme;
+package com.example.vachan.bakeme.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.vachan.bakeme.Model.Recipe;
 import com.example.vachan.bakeme.Model.Steps;
+import com.example.vachan.bakeme.R;
+import com.example.vachan.bakeme.Views.StepsDetailsActivity;
 
 import java.util.ArrayList;
 
@@ -42,8 +43,12 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.MyViewHolder
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, StepsDetailsActivity.class);
+                /*
                 intent.putExtra("Step", mData.get(position));
                 intent.putExtra("total_steps", mData.size());
+               */
+                intent.putParcelableArrayListExtra("steps", mData);
+                intent.putExtra("step_number", position);
                 mContext.startActivity(intent);
             }
         });

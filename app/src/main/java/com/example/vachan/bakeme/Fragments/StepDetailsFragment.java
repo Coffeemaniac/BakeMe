@@ -1,14 +1,18 @@
-package com.example.vachan.bakeme;
+package com.example.vachan.bakeme.Fragments;
 
-import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.vachan.bakeme.Model.Steps;
+import com.example.vachan.bakeme.R;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -19,42 +23,57 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 
-public class StepsDetailsActivity extends AppCompatActivity {
+public class StepDetailsFragment extends Fragment {
 
     private TextView descriptionTv;
+    private Button next;
     private PlayerView playerView;
     private ExoPlayer player;
     private long playbackPosition;
     private int currentWindow;
     private boolean playWhenReady;
+
     private Steps step;
-    private String title;
-    private int total_steps;
-    private String titleText;
 
+    private ParentActivityInterface mCallback;
+
+    public interface ParentActivityInterface {
+        public void onNextButtonClicked(int id);
+    }
+
+    public void setStep(Steps step) {
+        this.step = step;
+    }
+
+    public StepDetailsFragment() {
+        // required empty constructor
+    }
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_steps_details);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_step_details, container, false);
+    }
 
-        descriptionTv = findViewById(R.id.descriptionTv);
-        playerView = findViewById(R.id.video_view);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mCallback = (ParentActivityInterface) getContext();
+
+        descriptionTv = view.findViewById(R.id.descriptionTv);
+        playerView = view.findViewById(R.id.video_view);
+        next = view.findViewById(R.id.next);
         currentWindow = 0;
         playbackPosition = 0;
 
-        Intent intent = getIntent();
-        final Bundle bd = intent.getExtras();
-        step = bd.getParcelable("Step");
-        total_steps = bd.getInt("total_steps") - 1;
-        descriptionTv.setText(step.getDescription());
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCallback.onNextButtonClicked(step.getId());
+            }
+        });
 
-        titleText = "Step " + step.getId() + " of the " + total_steps + " steps";
-        getSupportActionBar().setTitle(titleText);
-
-
-
-
-        Log.v("URL", "The video URL is" + step.getVideoURL());
+        descriptionTv.setText(step.getStepInfo());
 
         if(step.getVideoURL().length() == 0){
             playerView.setVisibility(View.GONE);
@@ -65,7 +84,7 @@ public class StepsDetailsActivity extends AppCompatActivity {
 
     private void initializePlayer() {
         player = ExoPlayerFactory.newSimpleInstance(
-                new DefaultRenderersFactory(this),
+                new DefaultRenderersFactory(getContext()),
                 new DefaultTrackSelector(), new DefaultLoadControl());
 
         playerView.setPlayer(player);
@@ -84,13 +103,13 @@ public class StepsDetailsActivity extends AppCompatActivity {
                 createMediaSource(uri);
     }
 
-    protected  void onPause(){
+    public void onPause(){
         super.onPause();
         releasePlayer();
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         releasePlayer();
     }

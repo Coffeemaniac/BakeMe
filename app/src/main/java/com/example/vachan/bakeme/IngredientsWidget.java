@@ -2,6 +2,7 @@ package com.example.vachan.bakeme;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +21,18 @@ import java.util.ArrayList;
 public class IngredientsWidget extends AppWidgetProvider {
     private AppWidgetManager manager;
     private int[] ids;
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+
+        AppWidgetManager manager = AppWidgetManager.getInstance(context.getApplicationContext());
+        int[] ids = manager.getAppWidgetIds(new ComponentName(context.getApplicationContext(),IngredientsWidget.class));
+
+        for(int id : ids){
+             updateAppWidget(context, manager, id);
+        }
+    }
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {

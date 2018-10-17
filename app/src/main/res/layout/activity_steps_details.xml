@@ -6,21 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".StepsDetailsActivity">
+    tools:context=".Views.StepsDetailsActivity">
 
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/video_view"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-    <TextView
-        android:id="@+id/descriptionTv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:textSize="16sp"
-        android:textColor="#000"
-        android:padding="16dp"
-        android:layout_weight="1"
-        android:text="TextView" />
+        android:layout_height="match_parent">
+    </FrameLayout>
 </LinearLayout>

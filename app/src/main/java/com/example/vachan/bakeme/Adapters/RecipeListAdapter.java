@@ -1,4 +1,4 @@
-package com.example.vachan.bakeme;
+package com.example.vachan.bakeme.Adapters;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -13,9 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.vachan.bakeme.IngredientsWidget;
 import com.example.vachan.bakeme.Model.Recipe;
-
-import org.w3c.dom.Text;
+import com.example.vachan.bakeme.R;
+import com.example.vachan.bakeme.Views.RecipeDetailsActivity;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,14 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.My
     private Context mContext ;
     private ArrayList<Recipe> mData ;
 
+    public interface ListActivityInterface {
+        public void sendInfo(Recipe recipe);
+    }
+
+    private ListActivityInterface mCallback;
+
     public RecipeListAdapter(Context mContext, ArrayList<Recipe> mData) {
+        this.mCallback = (ListActivityInterface) mContext;
         this.mContext = mContext;
         this.mData = mData;
     }
@@ -44,31 +52,10 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.My
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, RecipeDetailsActivity.class);
-
-
-                SharedPreferences.Editor editor = mContext.getSharedPreferences("prefs", Context.MODE_PRIVATE).edit();
-                editor.putString("ingredients", mData.get(position).getAllIngredients());
-                editor.apply();
-
-                Intent broadCastIntent = new Intent(mContext, IngredientsWidget.class);
-                broadCastIntent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
-                mContext.sendBroadcast(broadCastIntent);
-
-
-
-                intent.putExtra("Recipe", mData.get(position));
-
-                mContext.startActivity(intent);
+                mCallback.sendInfo(mData.get(position));
             }
         });
 
-        /*
-            Intent intent = new Intent();
-          intent.setAction("com.example.SendBroadcast");
-          intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-          sendBroadcast(intent);
-         */
 
     }
 
