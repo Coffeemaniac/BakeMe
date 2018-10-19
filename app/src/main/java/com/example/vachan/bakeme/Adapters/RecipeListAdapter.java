@@ -20,6 +20,9 @@ import com.example.vachan.bakeme.Views.RecipeDetailsActivity;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.MyViewHolder> {
 
     private Context mContext ;
@@ -66,13 +69,12 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.My
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-         TextView nameView;
-         CardView cardView;
+         @BindView(R.id.name) TextView nameView;
+         @BindView(R.id.cardView) CardView cardView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            nameView = (TextView) itemView.findViewById(R.id.name);
-            cardView = (CardView) itemView.findViewById(R.id.cardView);
+            ButterKnife.bind(this, itemView);
         }
     }
 

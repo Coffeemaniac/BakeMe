@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 /**
  * Implementation of App Widget functionality.
- * App Widget Configuration implemented in {@link IngredientsWidgetConfigureActivity IngredientsWidgetConfigureActivity}
  */
+
 public class IngredientsWidget extends AppWidgetProvider {
     private AppWidgetManager manager;
     private int[] ids;
@@ -40,6 +40,7 @@ public class IngredientsWidget extends AppWidgetProvider {
         SharedPreferences prefs = context.getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         String restoredText = prefs.getString("ingredients", null);
 
+        Log.v("widgetText", restoredText);
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ingredients_widget);
@@ -60,9 +61,6 @@ public class IngredientsWidget extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         // When the user deletes the widget, delete the preference associated with it.
-        for (int appWidgetId : appWidgetIds) {
-            IngredientsWidgetConfigureActivity.deleteTitlePref(context, appWidgetId);
-        }
     }
 
     @Override

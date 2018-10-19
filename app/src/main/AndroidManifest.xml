@@ -31,11 +31,6 @@
                 android:resource="@xml/ingredients_widget_info" />
         </receiver>
 
-        <activity android:name=".IngredientsWidgetConfigureActivity">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

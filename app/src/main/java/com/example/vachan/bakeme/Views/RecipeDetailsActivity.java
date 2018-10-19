@@ -12,26 +12,35 @@ import com.example.vachan.bakeme.Model.Steps;
 import com.example.vachan.bakeme.R;
 import com.example.vachan.bakeme.Adapters.StepsAdapter;
 
+
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class RecipeDetailsActivity extends AppCompatActivity {
 
-    private TextView textView;
+    public static final String RECIPE_KEY = "Recipe";
+
+    @BindView(R.id.textView)
+    public TextView textView;
+    @BindView(R.id.stepsRecyclerView)
+    public RecyclerView stepsRecyclerView;
+
     private ArrayList<Steps> stepsList;
-    private RecyclerView stepsRecyclerView;
     private StepsAdapter mStepsAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
 
-
-        textView = findViewById(R.id.textView);
+        ButterKnife.bind(this);
 
         Intent intent = getIntent();
         final Bundle bd = intent.getExtras();
-        final Recipe recipe = bd.getParcelable("Recipe");
+        final Recipe recipe = bd.getParcelable(RECIPE_KEY);
         textView.setText(recipe.getAllIngredients());
 
         getSupportActionBar().setTitle(recipe.getName());
@@ -39,11 +48,9 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         stepsList = new ArrayList<>();
         stepsList.addAll(recipe.getSteps());
 
-        stepsRecyclerView = findViewById(R.id.stepsRecyclerView);
         mStepsAdapter = new StepsAdapter(this, stepsList);
 
         stepsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         stepsRecyclerView.setAdapter(mStepsAdapter);
-
     }
 }

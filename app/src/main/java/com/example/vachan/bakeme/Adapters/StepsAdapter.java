@@ -16,7 +16,13 @@ import com.example.vachan.bakeme.Views.StepsDetailsActivity;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.MyViewHolder> {
+
+    public static final String STEP_KEY = "steps";
+    public static  final String STEP_NUMBER_KEY = "step_number";
 
     private Context mContext ;
     private ArrayList<Steps> mData ;
@@ -43,12 +49,8 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.MyViewHolder
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, StepsDetailsActivity.class);
-                /*
-                intent.putExtra("Step", mData.get(position));
-                intent.putExtra("total_steps", mData.size());
-               */
-                intent.putParcelableArrayListExtra("steps", mData);
-                intent.putExtra("step_number", position);
+                intent.putParcelableArrayListExtra(STEP_KEY, mData);
+                intent.putExtra(STEP_NUMBER_KEY, position);
                 mContext.startActivity(intent);
             }
         });
@@ -62,13 +64,12 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.MyViewHolder
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView stepsView;
-        CardView cardView;
+        @BindView(R.id.steps) TextView stepsView;
+        @BindView(R.id.cardView) CardView cardView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            stepsView = (TextView) itemView.findViewById(R.id.steps);
-            cardView = (CardView) itemView.findViewById(R.id.cardView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

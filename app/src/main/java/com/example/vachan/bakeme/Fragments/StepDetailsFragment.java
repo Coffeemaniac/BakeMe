@@ -23,15 +23,32 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class StepDetailsFragment extends Fragment {
 
-    private TextView descriptionTv;
-    private Button next;
-    private PlayerView playerView;
+/*
+    descriptionTv = view.findViewById(R.id.descriptionTv);
+    playerView = view.findViewById(R.id.video_view);
+    next = view.findViewById(R.id.next);
+    prev = view.findViewById(R.id.prev);
+                                                  */
+
+    @BindView(R.id.video_view)
+    public PlayerView playerView;
+    @BindView(R.id.descriptionTv)
+    public TextView descriptionTv;
+    @BindView(R.id.next)
+    public Button next;
+    @BindView(R.id.prev)
+    public Button prev;
+
     private ExoPlayer player;
     private long playbackPosition;
     private int currentWindow;
     private boolean playWhenReady;
+
 
     private Steps step;
 
@@ -39,6 +56,8 @@ public class StepDetailsFragment extends Fragment {
 
     public interface ParentActivityInterface {
         public void onNextButtonClicked(int id);
+
+        public void onPrevButtonClicked(int id);
     }
 
     public void setStep(Steps step) {
@@ -58,11 +77,11 @@ public class StepDetailsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ButterKnife.bind(this, view);
+
         mCallback = (ParentActivityInterface) getContext();
 
-        descriptionTv = view.findViewById(R.id.descriptionTv);
-        playerView = view.findViewById(R.id.video_view);
-        next = view.findViewById(R.id.next);
+
         currentWindow = 0;
         playbackPosition = 0;
 
@@ -70,6 +89,13 @@ public class StepDetailsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mCallback.onNextButtonClicked(step.getId());
+            }
+        });
+
+        prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallback.onPrevButtonClicked(step.getId());
             }
         });
 
@@ -99,7 +125,7 @@ public class StepDetailsFragment extends Fragment {
 
     private MediaSource buildMediaSource(Uri uri) {
         return new ExtractorMediaSource.Factory(
-                new DefaultHttpDataSourceFactory("exoplayer-codelab")).
+                new DefaultHttpDataSourceFactory("BakeMe-App")).
                 createMediaSource(uri);
     }
 

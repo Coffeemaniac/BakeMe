@@ -8,19 +8,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vachan.bakeme.Fragments.StepDetailsFragment;
 import com.example.vachan.bakeme.Model.Steps;
 import com.example.vachan.bakeme.R;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 
 import java.util.ArrayList;
 
@@ -34,6 +26,9 @@ public class StepsDetailsActivity extends AppCompatActivity implements StepDetai
     private String titleText;
     private FragmentManager fragmentManager;
 
+    public static final String STEP_KEY = "steps";
+    public static  final String STEP_NUMBER_KEY = "step_number";
+
 
 
     @Override
@@ -45,9 +40,9 @@ public class StepsDetailsActivity extends AppCompatActivity implements StepDetai
 
         Intent intent = getIntent();
         final Bundle bd = intent.getExtras();
-        steps = bd.getParcelableArrayList("steps");
-        current_step_number = bd.getInt("step_number");
-        total_steps = steps.size();
+        steps = bd.getParcelableArrayList(STEP_KEY);
+        current_step_number = bd.getInt(STEP_NUMBER_KEY);
+        total_steps = steps.size() - 1;
 
         titleText = "Step " + current_step_number + " of the " + total_steps + " steps";
         getSupportActionBar().setTitle(titleText);
@@ -60,18 +55,39 @@ public class StepsDetailsActivity extends AppCompatActivity implements StepDetai
         fragmentManager.beginTransaction()
                 .add(R.id.fragment_container, stepFragment)
                 .commit();
-
-
     }
 
-    public void onNextButtonClicked(int id){
+
+    @Override
+    public void onNextButtonClicked(int id) {
+        int local_id = id + 1;
+        if(local_id <= steps.size()-1) {
+            titleText = "Step " + local_id + " of the " + total_steps + " steps";
+            getSupportActionBar().setTitle(titleText);
             StepDetailsFragment nextStepFragment = new StepDetailsFragment();
-            nextStepFragment.setStep(steps.get(id+1));
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, nextStepFragment)
-                .commit();
+            nextStepFragment.setStep(steps.get(local_id));
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, nextStepFragment)
+                    .commit();
+        }else{
+            Toast.makeText(this, R.string.nextButtonText, Toast.LENGTH_SHORT).show();
+        }
     }
 
+    @Override
+    public void onPrevButtonClicked(int id){
+        int local_id = id - 1;
+        if(local_id >= 0) {
+            titleText = "Step " + local_id + " of the " + total_steps + " steps";
+            getSupportActionBar().setTitle(titleText);
+            StepDetailsFragment nextStepFragment = new StepDetailsFragment();
+            nextStepFragment.setStep(steps.get(local_id));
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, nextStepFragment)
+                    .commit();
+        }else{
+            Toast.makeText(this, R.string.prevButtonText, Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }

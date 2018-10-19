@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,8 @@ import com.example.vachan.bakeme.Adapters.RecipeListAdapter;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,12 +33,23 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RecipesListActivity extends AppCompatActivity implements RecipeListAdapter.ListActivityInterface {
 
+    public static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net";
+    public static final String RECIPE_KEY = "Recipe";
+    public static final String INGREDIENT_KEY = "ingredients";
+    public static final String NAME_KEY = "name";
+    public static final String SHARED_PREFERENCES_KEY = "prefs";
+    public static final String RESOURCE_NAME = "Network_Call";
+    public static final String ACTION = "android.appwidget.action.APPWIDGET_UPDATE";
+
+
     private NetworkAPIClient client;
     private ArrayList<Recipe> recipesList;
-    private RecyclerView recipesRecyclerView;
     private RecipeListAdapter myAdapter;
 
-    //private CountingIdlingResource espressoTestIdlingResource = new CountingIdlingResource("Network_Call");
+    @BindView(R.id.recipesListView)
+    public RecyclerView recipesRecyclerView;
+
+    private CountingIdlingResource espressoTestIdlingResource = new CountingIdlingResource(RESOURCE_NAME);
 
 
     @Override
@@ -43,18 +57,21 @@ public class RecipesListActivity extends AppCompatActivity implements RecipeList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes_list);
 
+        ButterKnife.bind(this);
+
         recipesList = new ArrayList<>();
 
-        recipesRecyclerView = findViewById(R.id.recipesListView);
         myAdapter = new RecipeListAdapter(this, recipesList);
         recipesRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recipesRecyclerView.setAdapter(myAdapter);
 
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://d17h27t6h515a5.cloudfront.net")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
+        espressoTestIdlingResource.increment();
 
         client = retrofit.create(NetworkAPIClient.class);
         client.getRecipes().enqueue(new Callback<ArrayList<Recipe>>() {
@@ -62,11 +79,12 @@ public class RecipesListActivity extends AppCompatActivity implements RecipeList
             public void onResponse(Call<ArrayList<Recipe>> call, Response<ArrayList<Recipe>> response) {
                 recipesList.addAll(response.body());
                 myAdapter.notifyDataSetChanged();
+                espressoTestIdlingResource.decrement();
             }
 
             @Override
             public void onFailure(Call<ArrayList<Recipe>> call, Throwable t) {
-                Log.v("failed", "why is this shit failing?");
+                espressoTestIdlingResource.decrement();
             }
         });
 
@@ -75,17 +93,21 @@ public class RecipesListActivity extends AppCompatActivity implements RecipeList
     public void sendInfo(Recipe recipe) {
         Intent intent = new Intent(this, RecipeDetailsActivity.class);
 
-        SharedPreferences.Editor editor = this.getSharedPreferences("prefs", Context.MODE_PRIVATE).edit();
-        editor.putString("ingredients", recipe.getName() + "\n\n  " + recipe.getAllIngredients());
-        editor.putString("name", recipe.getName());
+        SharedPreferences.Editor editor = this.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE).edit();
+        editor.putString(INGREDIENT_KEY, recipe.getName() + "\n\n" + recipe.getAllIngredients());
+        editor.putString(NAME_KEY, recipe.getName());
         editor.apply();
 
         Intent broadCastIntent = new Intent(this, IngredientsWidget.class);
-        broadCastIntent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+        broadCastIntent.setAction(ACTION);
         sendBroadcast(broadCastIntent);
 
-        intent.putExtra("Recipe", recipe);
+        intent.putExtra(RECIPE_KEY, recipe);
 
         startActivity(intent);
+    }
+
+    public CountingIdlingResource getEspressoIdlingResourceForMainActivity() {
+        return espressoTestIdlingResource;
     }
 }

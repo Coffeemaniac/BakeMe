@@ -2,5 +2,18 @@
     <string name="app_name">BakeMe</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="configure">Configure</string>
-    <string name="add_widget">Add widget</string>
+    <string name="add_widget"> Brownies
+
+        • Bittersweet chocolate (60-70% cacao) (350.0 G)
+    • unsalted butter (226.0 G)
+    • granulated sugar (300.0 G)
+    • light brown sugar (100.0 G)
+    • large eggs (5.0 UNIT)
+    • vanilla extract (1.0 TBLSP)
+    • all purpose flour (140.0 G)
+    • cocoa powder (40.0 G)
+    • salt (1.5 TSP)
+    • semisweet chocolate chips (350.0 G)</string>
+    <string name="prevButtonText">You are at the beginning of the list!</string>
+    <string name="nextButtonText">You have reached the end of the list!</string>
 </resources>
