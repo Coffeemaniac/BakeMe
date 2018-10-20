@@ -2,13 +2,16 @@ package com.example.vachan.bakeme.Fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.vachan.bakeme.Model.Steps;
@@ -22,18 +25,12 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class StepDetailsFragment extends Fragment {
-
-/*
-    descriptionTv = view.findViewById(R.id.descriptionTv);
-    playerView = view.findViewById(R.id.video_view);
-    next = view.findViewById(R.id.next);
-    prev = view.findViewById(R.id.prev);
-                                                  */
 
     @BindView(R.id.video_view)
     public PlayerView playerView;
@@ -43,11 +40,14 @@ public class StepDetailsFragment extends Fragment {
     public Button next;
     @BindView(R.id.prev)
     public Button prev;
+    @BindView(R.id.stepImage)
+    public ImageView stepImage;
 
     private ExoPlayer player;
     private long playbackPosition;
-    private int currentWindow;
     private boolean playWhenReady;
+    private Uri uri;
+    private MediaSource mediaSource;
 
 
     private Steps step;
@@ -55,14 +55,11 @@ public class StepDetailsFragment extends Fragment {
     private ParentActivityInterface mCallback;
 
     public interface ParentActivityInterface {
-        public void onNextButtonClicked(int id);
-
-        public void onPrevButtonClicked(int id);
+        void onNextButtonClicked(int id);
+        void onPrevButtonClicked(int id);
+        Steps getSteps();
     }
 
-    public void setStep(Steps step) {
-        this.step = step;
-    }
 
     public StepDetailsFragment() {
         // required empty constructor
@@ -77,13 +74,24 @@ public class StepDetailsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Log.v("called", "onViewCreated is being called in fragment");
+
         ButterKnife.bind(this, view);
 
         mCallback = (ParentActivityInterface) getContext();
 
+        if(savedInstanceState != null){
+            playWhenReady = savedInstanceState.getBoolean("PLAYER_STATE");
+            playbackPosition = savedInstanceState.getLong("POSITION");
+            Log.v("SavedInstance", "Playbackposition: " + playbackPosition);
+            step = savedInstanceState.getParcelable("STEP");
+        }else{
+            playWhenReady = true;
+            playbackPosition = 0;
+            step = mCallback.getSteps();
+        }
 
-        currentWindow = 0;
-        playbackPosition = 0;
+
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,9 +109,25 @@ public class StepDetailsFragment extends Fragment {
 
         descriptionTv.setText(step.getStepInfo());
 
-        if(step.getVideoURL().length() == 0){
+        /* Error handing for JSON responses */
+
+        if(step.getVideoURL().isEmpty()){
             playerView.setVisibility(View.GONE);
-        }else {
+            stepImage.setVisibility(View.VISIBLE);
+            if(step.getThumbnailURL().isEmpty() || step.getThumbnailURL().contains(".mp4")){
+                Picasso.with(getContext())
+                        .load("https://i.imgur.com/Ifn5z2q.png")
+                        .error(R.drawable.error_image)
+                        .into(stepImage);
+            }else{
+                Picasso.with(getContext())
+                        .load(step.getThumbnailURL())
+                        .error(R.drawable.error_image)
+                        .into(stepImage);
+            }
+        }else{
+            uri = Uri.parse(step.getVideoURL());
+            mediaSource = buildMediaSource(uri);
             initializePlayer();
         }
     }
@@ -113,14 +137,11 @@ public class StepDetailsFragment extends Fragment {
                 new DefaultRenderersFactory(getContext()),
                 new DefaultTrackSelector(), new DefaultLoadControl());
 
-        playerView.setPlayer(player);
-
-        player.setPlayWhenReady(true);
-        player.seekTo(currentWindow, playbackPosition);
-
-        Uri uri = Uri.parse(step.getVideoURL());
-        MediaSource mediaSource = buildMediaSource(uri);
         player.prepare(mediaSource, true, false);
+
+        player.setPlayWhenReady(playWhenReady);
+        player.seekTo(playbackPosition);
+        playerView.setPlayer(player);
     }
 
     private MediaSource buildMediaSource(Uri uri) {
@@ -129,8 +150,13 @@ public class StepDetailsFragment extends Fragment {
                 createMediaSource(uri);
     }
 
+
     public void onPause(){
         super.onPause();
+        if(player != null) {
+            playbackPosition = player.getCurrentPosition();
+            playWhenReady = player.getPlayWhenReady();
+        }
         releasePlayer();
     }
 
@@ -142,11 +168,17 @@ public class StepDetailsFragment extends Fragment {
 
     private void releasePlayer() {
         if (player != null) {
-            playbackPosition = player.getCurrentPosition();
-            currentWindow = player.getCurrentWindowIndex();
-            playWhenReady = player.getPlayWhenReady();
             player.release();
             player = null;
         }
+    }
+
+    public void onSaveInstanceState(Bundle outState) {
+        Log.v("Values1", "playbackPosition: " + playbackPosition );
+        outState.putParcelable("STEP", step);
+        outState.putLong("POSITION", playbackPosition);
+        outState.putBoolean("PLAYER_STATE", playWhenReady);
+        super.onSaveInstanceState(outState);
+
     }
 }

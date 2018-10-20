@@ -44,6 +44,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         textView.setText(recipe.getAllIngredients());
 
         getSupportActionBar().setTitle(recipe.getName());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         stepsList = new ArrayList<>();
         stepsList.addAll(recipe.getSteps());
