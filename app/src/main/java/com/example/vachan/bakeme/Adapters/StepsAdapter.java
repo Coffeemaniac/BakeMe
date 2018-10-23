@@ -21,11 +21,14 @@ import butterknife.ButterKnife;
 
 public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.MyViewHolder> {
 
-    public static final String STEP_KEY = "steps";
-    public static  final String STEP_NUMBER_KEY = "step_number";
-
     private Context mContext ;
     private ArrayList<Steps> mData ;
+
+    public interface DetailsActivityInterface {
+        public void doSomething(int position);
+    }
+
+    public DetailsActivityInterface mCallback;
 
     public StepsAdapter(Context mContext, ArrayList<Steps> mData) {
         this.mContext = mContext;
@@ -43,18 +46,17 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(@NonNull final StepsAdapter.MyViewHolder holder, final int position) {
 
+        mCallback = (DetailsActivityInterface) mContext;
+
         holder.stepsView.setText(mData.get(position).getStepInfo());
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, StepsDetailsActivity.class);
-                intent.putParcelableArrayListExtra(STEP_KEY, mData);
-                intent.putExtra(STEP_NUMBER_KEY, position);
-                mContext.startActivity(intent);
+                mCallback.doSomething(position);
+
             }
         });
-
     }
 
     @Override

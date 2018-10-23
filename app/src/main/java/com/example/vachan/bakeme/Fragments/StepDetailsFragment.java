@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.vachan.bakeme.Model.Steps;
 import com.example.vachan.bakeme.R;
+import com.example.vachan.bakeme.Views.RecipeDetailsActivity;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -51,14 +52,18 @@ public class StepDetailsFragment extends Fragment {
 
 
     private Steps step;
+    private boolean mTwoPane;
 
     private ParentActivityInterface mCallback;
 
     public interface ParentActivityInterface {
-        void onNextButtonClicked(int id);
-        void onPrevButtonClicked(int id);
-        Steps getSteps();
+        public void onNextButtonClicked(int id);
+        public void onPrevButtonClicked(int id);
+        public Steps getSteps();
+        public boolean getTwoPane();
     }
+
+
 
 
     public StepDetailsFragment() {
@@ -80,15 +85,23 @@ public class StepDetailsFragment extends Fragment {
 
         mCallback = (ParentActivityInterface) getContext();
 
+
         if(savedInstanceState != null){
             playWhenReady = savedInstanceState.getBoolean("PLAYER_STATE");
             playbackPosition = savedInstanceState.getLong("POSITION");
             Log.v("SavedInstance", "Playbackposition: " + playbackPosition);
             step = savedInstanceState.getParcelable("STEP");
+            mTwoPane = savedInstanceState.getBoolean("TWO_PANE");
         }else{
             playWhenReady = true;
             playbackPosition = 0;
             step = mCallback.getSteps();
+            mTwoPane = mCallback.getTwoPane();
+        }
+
+        if(mTwoPane){
+            next.setVisibility(View.GONE);
+            prev.setVisibility(View.GONE);
         }
 
 
@@ -178,6 +191,7 @@ public class StepDetailsFragment extends Fragment {
         outState.putParcelable("STEP", step);
         outState.putLong("POSITION", playbackPosition);
         outState.putBoolean("PLAYER_STATE", playWhenReady);
+        outState.putBoolean("TWO_PANE", mTwoPane);
         super.onSaveInstanceState(outState);
 
     }

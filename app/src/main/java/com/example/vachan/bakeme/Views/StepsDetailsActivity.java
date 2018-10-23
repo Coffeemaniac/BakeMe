@@ -33,8 +33,6 @@ public class StepsDetailsActivity extends AppCompatActivity implements StepDetai
     private final String SIMPLE_FRAGMENT_TAG = "myfragmenttag";
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,5 +115,9 @@ public class StepsDetailsActivity extends AppCompatActivity implements StepDetai
 
     public Steps getSteps(){
         return steps.get(current_step_number);
+    }
+
+    public boolean getTwoPane(){
+        return false;
     }
 }
